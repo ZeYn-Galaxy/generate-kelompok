@@ -64,7 +64,7 @@ const Generate = () => {
 <template>
   <header class="w-full bg-slate-200 h-12 flex justify-end max-sm:h-72 max-sm:flex-col">
     <div class="w-1/4 h-full flex justify-start items-center max-sm:w-full max-sm:justify-center">
-      <a href="/" class="font-bold text-2xl text-indigo-500 mx-4">Generate Kelompok</a>
+      <a href="https://zeyn-galaxy.github.io/generate-kelompok/" class="font-bold text-2xl text-indigo-500 mx-4">Generate Kelompok</a>
     </div>
     <div class="w-3/4 h-full bg-slate-200 flex justify-end items-center max-sm:w-full max-sm:flex-col">
       <!-- Anggota -->
