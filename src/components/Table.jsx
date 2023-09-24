@@ -3,7 +3,7 @@ function Table(props) {
     })
     return (
         <>
-            <div className="overflow-x-auto m-5">
+            <div className="overflow-x-auto mx-5 my-2">
                 <table className="table table-zebra">
                     {/* head */}
                     <thead>
@@ -23,9 +23,9 @@ function Table(props) {
                                     <td className="text-xl text-center">{item.length}</td>
                                     <td>
                                         <div className="flex flex-col justify-start items-center">
-                                            <div className={"w-72 flex justify-start items-center max-2xl:flex-wrap " + (item.length >= 25 ? "flex-wrap" : "")}>
+                                            <div className={"max-sm:w-48 flex justify-start items-center max-2xl:flex-wrap " + (item.length >= 25 ? "flex-wrap" : "")}>
                                                 {item.map((item, index) => (
-                                                    <div key={index} className="badge badge-outline m-2 w-10">{item}</div>
+                                                    <div key={index} className="badge badge-outline m-2 w-10 ">{item}</div>
                                                 ))}
                                             </div>
                                         </div>

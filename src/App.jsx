@@ -3,7 +3,11 @@ import Navbar from './components/Navbar'
 import Table from './components/Table';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [TotalAnggota, setTotalAnggota] = useState(0);
+  const [TotalKelompok, setTotalKelompok] = useState(0);
+  const [IsInValidAnggota, setIsInValidAnggota] = useState(false);
+  const [IsInValidKelompok, setIsInValidKelompok] = useState(false);
+  const [KelompokError, setKelompokError] = useState('');
   const [data, setData] = useState({
     Kelompok: [],
     Exception: [],
@@ -82,16 +86,134 @@ function App() {
   const resetData = () => {
     InputDataChange([], [])
   }
+
+  const generate = () => {
+    if (TotalAnggota < 0 || TotalKelompok < 0 || TotalKelompok > TotalAnggota) {
+      return
+    }
+
+    const existingMembers = [].concat(...data.Kelompok);
+    let temp = [...data.Kelompok]; // Salin props.DataKelompok agar tidak mengubah properti asli
+
+    const nonExistingMembers = [];
+    for (let i = 1; i <= TotalAnggota; i++) {
+      if (!existingMembers.includes(i)) {
+        nonExistingMembers.push(i);
+      }
+    }
+
+    for (let i = 0; i < TotalKelompok; i++) {
+      if (temp[i] === undefined) {
+        temp[i] = [];
+      }
+    }
+
+    // Hitung jumlah anggota yang akan ditempatkan di setiap kelompok
+    let AnggotaPerKelompok = Math.floor(TotalAnggota / TotalKelompok);
+    let anggotaPerSisaKelompok = TotalAnggota % TotalKelompok; // Jumlah anggota yang harus dibagi rata ke kelompok
+    let data_exception = [...data.Exception]
+
+    for (let i = 0; i < temp.length; i++) {
+      // if (props.Exception.includes(i+1)) {
+      //     continue
+      // }
+      let found = false
+      data_exception.forEach((item) => {
+        item.forEach((iterasi) => {
+          if (temp[i].includes(iterasi)) {
+            found = true
+          }
+        })
+      })
+      if (found) {
+        continue
+      }
+      let anggotaKelompok = AnggotaPerKelompok + (i < anggotaPerSisaKelompok ? 1 : 0); // Tentukan jumlah anggota yang harus dimasukkan ke kelompok saat ini
+      while (temp[i].length < anggotaKelompok) {
+        if (nonExistingMembers.length === 0) {
+          break; // Keluar dari loop jika tidak ada anggota yang tersisa
+        }
+        const randomIndex = Math.floor(Math.random() * nonExistingMembers.length);
+        temp[i].push(nonExistingMembers[randomIndex])
+        nonExistingMembers.splice(randomIndex, 1)
+      }
+    }
+
+    // for (let i = 0; i < TotalAnggota; i++) {
+    //     const randomIndex = Math.floor(Math.random() * temp.length);
+    //     if (temp[randomIndex].length >= AnggotaPerKelompok) {
+    //         i--;
+    //     }
+    //     const currentMember = nonExistingMembers.pop();
+    //     if (currentMember !== undefined) {
+    //         temp[randomIndex].push(currentMember);
+    //     } else {
+    //         break; // Jika anggota sudah habis, keluar dari loop
+    //     }
+    // }
+
+    InputDataChange(temp, data.Exception);
+  };
+
+
+  useEffect(() => {
+    setIsInValidAnggota(TotalAnggota < 0)
+    setIsInValidKelompok(TotalKelompok < 0 || TotalAnggota > 0 && TotalKelompok > TotalAnggota)
+    if (TotalKelompok < 0) {
+      setKelompokError('Nilai tidak boleh dibawah 0 atau negative!')
+    } else if (TotalKelompok > TotalAnggota) {
+      setKelompokError('Nilai tidak boleh diatas total anggota!')
+    }
+  }, [TotalAnggota, TotalKelompok])
+
+  const HandleInputAnggotaChange = (event) => {
+    setTotalAnggota(parseInt(event.target.value))
+  }
+
+  const HandleInputKelompokChange = (event) => {
+    setTotalKelompok(parseInt(event.target.value))
+  }
+
+
   return (
     <>
       <div>
-        <Navbar OnChangeKelompok={InputDataChange} DataKelompok={data.Kelompok} Exception={data.Exception} />
-        {/* Form Tambah */}
+        <Navbar
+          TotalAnggota={TotalAnggota}
+          setTotalAnggota={setTotalAnggota}
+          TotalKelompok={TotalKelompok}
+          setTotalKelompok={setTotalKelompok}
+          IsInValidAnggota={IsInValidAnggota}
+          setIsInValidAnggota={setIsInValidAnggota}
+          IsInValidKelompok={IsInValidKelompok}
+          setIsInValidKelompok={setIsInValidKelompok}
+          KelompokError={KelompokError}
+          setKelompokError={setKelompokError}
+          generate={generate}
+          resetData={resetData}
+        />
+
         {/* You can open the modal using document.getElementById('ID').showModal() method */}
-        <div className='w-full flex justify-start items-center input-group'>
-          <button className="btn btn-outline btn-info my-2 ml-5" onClick={() => document.getElementById('my_modal_3').showModal()}>TAMBAH KELOMPOK</button>
-          <button className='btn btn-outline btn-error m-2' onClick={resetData}>RESET DATA</button>
+        <div className='flex justify-between items-center max-lg:justify-start'>
+          <div className="form-control lg:mx-5">
+            <div className="input-group">
+              <button className="btn btn-outline btn-info max-lg:btn-sm max-lg:hidden" onClick={() => document.getElementById('my_modal_3').showModal()}>TAMBAH KELOMPOK</button>
+              <button className='btn btn-outline btn-error max-lg:btn-sm max-lg:hidden' onClick={resetData}>RESET DATA</button>
+            </div>
+          </div>
+          <div className="form-control lg:mx-5">
+            <div className="input-group">
+              <input type="number" placeholder="Total Anggota" className={"input input-bordered ml-10  transition-all duration-75 max-lg:input-sm max-lg:w-28 " + (IsInValidAnggota ? "input-error" : "input-info")}
+                onChange={HandleInputAnggotaChange} />
+              <input type="number" placeholder="Total Kelompok" className={"input input-bordered  transition-all duration-75 max-lg:input-sm  max-lg:w-28 " + (IsInValidKelompok ? "input-error" : "input-info")}
+                onChange={HandleInputKelompokChange} />
+              <button className='btn btn-outline btn-success join-item max-lg:btn-sm' onClick={generate}>
+                generate</button>
+            </div>
+          </div>
         </div>
+        {/* Put this part before </body> tag */}
+        <input type="checkbox" id="my_modal_6" className="modal-toggle" />
         <dialog id="my_modal_3" className="modal">
           <div className="modal-box">
             <span className='uppercase font-bold text-xl flex justify-center items-center'>tambah kelompok</span>

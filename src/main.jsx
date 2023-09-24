@@ -17,10 +17,10 @@ ReactDOM.createRoot(document.getElementById('footer')).render(
       <nav>
         <div className="grid grid-flow-col gap-4">
           <a href="https://github.com/ZeYn-Galaxy" target='_blank'>
-            <i class="fa-brands fa-github text-3xl"></i>
+            <i className="fa-brands fa-github text-3xl"></i>
           </a>
           <a href="https://www.instagram.com/shafwan_k1" target='_blank'>
-            <i class="fa-brands fa-instagram text-3xl"></i>
+            <i className="fa-brands fa-instagram text-3xl"></i>
           </a>
         </div>
       </nav>
