@@ -1,21 +1,6 @@
 import { useState, useEffect } from 'react'
 
 function Navbar(props) {
-    const {
-        TotalAnggota,
-        setTotalAnggota,
-        TotalKelompok,
-        setTotalKelompok,
-        IsInValidAnggota,
-        setIsInValidAnggota,
-        IsInValidKelompok,
-        setIsInValidKelompok,
-        KelompokError,
-        setKelompokError,
-    } = props;
-
-
-
     return (
         <>
 

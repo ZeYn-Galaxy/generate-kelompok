@@ -22,7 +22,7 @@ function App() {
     let found = false;
 
     // Cek apakah tempAbsen ada dalam array temp
-    if (temp.includes(parseInt(tempAbsen))) {
+    if (temp.includes(parseInt(tempAbsen)) || parseInt(tempAbsen) === 0) {
       found = true;
     } else {
       // Cek apakah tempAbsen ada dalam array data.Kelompok
@@ -94,6 +94,10 @@ function App() {
 
     const existingMembers = [].concat(...data.Kelompok);
     let temp = [...data.Kelompok]; // Salin props.DataKelompok agar tidak mengubah properti asli
+    // Hitung jumlah anggota yang akan ditempatkan di setiap kelompok
+    let AnggotaPerKelompok = Math.floor(TotalAnggota / TotalKelompok);
+    let anggotaPerSisaKelompok = TotalAnggota % TotalKelompok; // Jumlah anggota yang harus dibagi rata ke kelompok
+    let data_exception = [...data.Exception]
 
     const nonExistingMembers = [];
     for (let i = 1; i <= TotalAnggota; i++) {
@@ -102,16 +106,12 @@ function App() {
       }
     }
 
-    for (let i = 0; i < TotalKelompok; i++) {
+    for (let i = 0; i < TotalKelompok + data_exception.length; i++) {
       if (temp[i] === undefined) {
         temp[i] = [];
       }
     }
 
-    // Hitung jumlah anggota yang akan ditempatkan di setiap kelompok
-    let AnggotaPerKelompok = Math.floor(TotalAnggota / TotalKelompok);
-    let anggotaPerSisaKelompok = TotalAnggota % TotalKelompok; // Jumlah anggota yang harus dibagi rata ke kelompok
-    let data_exception = [...data.Exception]
 
     for (let i = 0; i < temp.length; i++) {
       // if (props.Exception.includes(i+1)) {
@@ -139,19 +139,11 @@ function App() {
       }
     }
 
-    // for (let i = 0; i < TotalAnggota; i++) {
-    //     const randomIndex = Math.floor(Math.random() * temp.length);
-    //     if (temp[randomIndex].length >= AnggotaPerKelompok) {
-    //         i--;
-    //     }
-    //     const currentMember = nonExistingMembers.pop();
-    //     if (currentMember !== undefined) {
-    //         temp[randomIndex].push(currentMember);
-    //     } else {
-    //         break; // Jika anggota sudah habis, keluar dari loop
-    //     }
-    // }
-
+    temp.forEach((item, index) => {
+      if (item.length === 0) {
+        temp.splice(index, 1)
+      }
+    })
     InputDataChange(temp, data.Exception);
   };
 
